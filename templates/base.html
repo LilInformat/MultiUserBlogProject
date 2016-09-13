@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Meta -->
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta charset="utf-8">
+
+  <!-- CSS Sources -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <title>Udacity-Chan</title>
+</head>
+<body>
+  <header class='navbar navbar-default navbar-fixed-top container header'>
+    <div class='header_content'>
+      <h1>Udacity Blog</h1>
+    </div>
+    <!--Navigation-->
+    <nav>
+      <ul class='nav nav-pills nav_list'>
+        <li class='nav-item' role='presentation'>
+          <a href="/home">
+            <i class="fa fa-home" aria-hidden="true"></i>&nbsp; HOME
+          </a>
+        </li>
+        <li class='nav-item' role='presentation'>
+          <a href="/newpost">
+            <i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp; NEWPOST
+          </a>
+        </li>
+        <li class='nav-item' role='presentation'>
+          <a href="/newpost">
+            <i class="fa fa-search" aria-hidden="true"></i>&nbsp; SEARCH
+          </a>
+        </li>
+        <li class='nav-item' role='presentation'>
+          <a href="/login">
+            <i class="fa fa-sign-in" aria-hidden="true"></i>&nbsp; {{log_text}}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <hr>
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+  <hr>
+  <footer class="container footer">
+    <div class="row">
+      <div class="col-xs-12 col-md-12">
+        <p>
+          Copyright &#169; Richard Huang 2016
+        </p>
+      </div>
+    </div>
+  </footer>
+  <!-- Java script -->
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+
+</body>
+</html>

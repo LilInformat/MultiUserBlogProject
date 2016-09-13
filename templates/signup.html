@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post">
+  <div class="container signup_content">
+    <div class="row">
+      <div class="col-md-12">
+        <p>
+          Please fill out the form to complete the signup process. You will be required to login afterwards.
+        </p>
+        <p class="error-text">
+          {{error_username | safe}} {{error_password | safe}} {{error_verify | safe}} {{error_email | safe}}
+        </p>
+      </div>
+      <br>
+      <div class="col-md-6">
+        <label>Enter Username: &nbsp;</label>
+        <label>Enter Password: &nbsp;</label>
+        <label>Verify Password: &nbsp;</label>
+        <label>Enter Email: &nbsp;</label>
+      </div>
+      <div class="col-md-6">
+        <input class="input-textbox-right" type="text" name="input_username" value="{{username}}">
+        <input class="input-textbox-right" type="password" name="input_password">
+        <input class="input-textbox-right" type="password" name="input_verify">
+        <input class="input-textbox-right" type="text" name="input_email" value="{{email}}">
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <button class="btn btn-default center-block" type="submit">Submit</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

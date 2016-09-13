@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content container">
+  <div class="row">
+    <div class="blog_title col-md-8">
+      <h4>
+          {{ post.subject }}
+      </h4>
+    </div>
+    <div class="blog_date col-md-4">
+      <h5>
+          {{ post.created }}
+      </h5>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="blog_body col-md-12">
+      <pre class="center-block">{{ post.content }}</pre>
+    </div>
+  </div>
+  <form method="post">
+    <div class="row">
+      <div class="blog_like col-md-6">
+        {% if like_enable %}
+        <button name="input_button" class="btn btn-default" type="submit" value="like">
+          <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>Like
+        </button>
+        {% endif %}
+        {% if dislike_enable %}
+        <button name="input_button" class="btn btn-default" type="submit" value="dislike">
+          <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>Dislike
+        </button>
+        {% endif %}
+        {% if edit_enable %}
+        <button name="input_button" class="btn btn-default" type="submit" value="edit">
+          <i class="fa fa-pencil" aria-hidden="true"></i>Edit
+        </button>
+        {% endif %}
+        {% if edit_enable %}
+        <button name="input_button" class="btn btn-default" type="submit" value="delete">
+          <i class="fa fa-times" aria-hidden="true"></i>Delete
+        </button>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+  {% for comment in comments %}
+  <hr>
+  <div class="row">
+    <div class="blog_comment col-md-12">
+      <h5>Comment by {{comment.author}} at {{comment.created}}</h5>
+      <textarea name="{{comment.key().id()}}" {% if not comment.edit_mode %} disabled  {% endif %} class="center-block">{{comment.comment}}</textarea>
+    </div>
+  </div>
+  <div class="row">
+      <div class="blog_comment col-md-12">
+        <form method="post">
+          {% if comment.edit_enable %}
+            {% if not comment.edit_mode %}
+            <button name="input_button" class="btn btn-default" type="submit" value="editcomment,{{comment.key().id()}}">
+              <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+            {% endif %}
+            {% if comment.edit_mode %}
+            <button name="input_button" class="btn btn-default" type="submit" value="submitcomment,{{comment.key().id()}}">
+              <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+            <button name="input_button" class="btn btn-default" type="submit" value="deletecomment,{{comment.key().id()}}">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+            {% endif %}
+          {% endif %}
+        </form>
+    </div>
+  </div>
+  {% endfor %}
+  <hr>
+  <form method="post">
+    {% if comment_enable %}
+    <div class="row">
+      <div class="blog_comment col-md-12">
+        <textarea name="comment_text" rows="10" cols ="50">{{comment_text}}</textarea>
+        <button name="input_button" class="btn btn-default" type="submit" value="comment">Comment</button>
+      </div>
+    </div>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}
+

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content container">
+    <div class="row">
+        <div class="col-md-2">
+            <p><h3>Likes/Dislikes</h3></p>
+        </div>
+        <div class="col-md-7">
+            <p><h3>Subject</h3></p>
+        </div>
+        <div class="col-md-3">
+            <p><h3>Created</h3></p>
+        </div>
+    </div>
+    <hr>
+    {% for post in posts %}
+    <div class="row">
+        <div class="blog_title col-md-12">
+            <form action="/post/{{post.key().id()}}">
+                <button class="btn btn-default center-block post_button" type="submit">
+                    <div class="col-md-2">
+                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                        {{ post.likes }}/
+                        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+                        {{ post.dislikes }}
+                    </div>
+                    <div class="col-md-7">
+                        {{ post.subject }}</a>
+                    </div>
+                    <div class="col-md-3">
+                        {{ post.created }}
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
