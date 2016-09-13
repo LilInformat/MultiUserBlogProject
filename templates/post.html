@@ -51,7 +51,7 @@
   <div class="row">
     <div class="blog_comment col-md-12">
       <h5>Comment by {{comment.author}} at {{comment.created}}</h5>
-      <textarea name="{{comment.key().id()}}" {% if not comment.edit_mode %} disabled  {% endif %} class="center-block">{{comment.comment}}</textarea>
+      <textarea name="textarea-{{comment.key().id()}}" {% if not comment.edit_mode %} disabled  {% endif %} class="center-block">{{comment.comment}}</textarea>
     </div>
   </div>
   <div class="row">
