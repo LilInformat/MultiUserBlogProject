@@ -48,22 +48,23 @@
   </form>
   {% for comment in comments %}
   <hr>
-  <div class="row">
-    <div class="blog_comment col-md-12">
-      <h5>Comment by {{comment.author}} at {{comment.created}}</h5>
-      <textarea name="textarea-{{comment.key().id()}}" {% if not comment.edit_mode %} disabled  {% endif %} class="center-block">{{comment.comment}}</textarea>
+  <form method="post">
+    <div class="row">
+      <div class="blog_comment col-md-12">
+        <h5>Comment by {{comment.author}} at {{comment.created}}</h5>
+        <textarea name="textarea-{{comment.key().id()}}" {% if not comment.edit_enable %} disabled  {% endif %} class="center-block">{{comment.content}}</textarea>
+      </div>
     </div>
-  </div>
-  <div class="row">
+    <div class="row">
       <div class="blog_comment col-md-12">
         <form method="post">
-          {% if comment.edit_enable %}
-            {% if not comment.edit_mode %}
+          {% if comment.edit_auth %}
+            {% if not comment.edit_enable %}
             <button name="input_button" class="btn btn-default" type="submit" value="editcomment,{{comment.key().id()}}">
               <i class="fa fa-pencil" aria-hidden="true"></i>
             </button>
             {% endif %}
-            {% if comment.edit_mode %}
+            {% if comment.edit_enable %}
             <button name="input_button" class="btn btn-default" type="submit" value="submitcomment,{{comment.key().id()}}">
               <i class="fa fa-check" aria-hidden="true"></i>
             </button>
@@ -72,9 +73,9 @@
             </button>
             {% endif %}
           {% endif %}
-        </form>
+      </div>
     </div>
-  </div>
+  </form>
   {% endfor %}
   <hr>
   <form method="post">
