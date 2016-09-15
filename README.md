@@ -21,3 +21,10 @@ User must be logged in to comment or edit their comments
 The Pencil Icon means to enable edit
 The Check Icon means to Submit
 The Cross Icon means to Delete
+
+# Setup (Local - Mac OS)
+If Google app engine for python is not installed, you can install it here: https://cloud.google.com/appengine/downloads
+1. Download files and place it in your desired directory
+2. Go to File->Add Existing Application
+3. Navigate to the directory of the files
+4. Hit Run
