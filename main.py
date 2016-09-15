@@ -273,7 +273,6 @@ class PostHandler(Handler):
         p_key = db.Key.from_path('Post', int(post_id), parent = blog.key())
         post = db.get(p_key)
 
-        self.resetCommentEditEnable(comment_id)
         self.initCommentEditAuth()
 
         if not post:
@@ -286,6 +285,7 @@ class PostHandler(Handler):
 
         user = self.getUser_Logged()
         if user:
+            self.resetCommentEditEnable(comment_id)
             params["log_text"] = LOGOUT
             params["comment_enable"] = True
             if not user.username == post.author:
@@ -328,9 +328,10 @@ class PostHandler(Handler):
                 post.dislike_userlist.append(user.username)
             post.put()
         elif button_value[0] == "comment":
-            new_content = self.request.get("comment_text","")
-            new_comment = Comment(parent=post, author=user.username, content=new_content, edit_auth= True)
-            new_comment.put()
+            if getUser_Logged():
+                new_content = self.request.get("comment_text","")
+                new_comment = Comment(parent=post, author=user.username, content=new_content, edit_auth= True)
+                new_comment.put()
         elif button_value[0] == "edit":
             self.redirect('/edit/%s' % str(post.key().id()))
             return
@@ -342,21 +343,27 @@ class PostHandler(Handler):
             self.redirect('/')
             return
         elif button_value[0] == "editcomment":
+            user = getUser_Logged()
             c_key = db.Key.from_path('Comment', int(button_value[1]), parent = post.key())
             comment = db.get(c_key)
-            comment.edit_enable = True
-            comment_id = str(comment.key().id())
-            comment.put()
+            if comment and user.username == comment.author:
+                comment.edit_enable = True
+                comment_id = str(comment.key().id())
+                comment.put()
         elif button_value[0] == "deletecomment":
             c_key = db.Key.from_path('Comment', int(button_value[1]), parent = post.key())
             comment = db.get(c_key)
-            comment.delete()
+            user = getUser_Logged()
+            if comment and user.username == comment.author:
+                comment.delete()
         elif button_value[0] == "submitcomment":
+            user = getUser_Logged()
             c_key = db.Key.from_path('Comment', int(button_value[1]), parent = post.key())
             comment = db.get(c_key)
-            comment.content = self.request.get("textarea-" + button_value[1])
-            comment.edit_enable = False
-            comment.put()
+            if comment and user.username == comment.author:
+                comment.content = self.request.get("textarea-" + button_value[1])
+                comment.edit_enable = False
+                comment.put()
 
         if comment_id:
             self.redirect('/post/%s/%s' % (str(post.key().id()), comment_id))
