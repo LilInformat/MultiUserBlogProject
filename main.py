@@ -131,12 +131,12 @@ class PostHandler(Handler):
         p_key = db.Key.from_path('Post', int(post_id), parent=blog.key())
         post = db.get(p_key)
 
-        self.initCommentEditAuth(post)
-
         if not post:
             self.error(404)
             self.redirect('/')
             return
+
+        self.initCommentEditAuth(post)
 
         comments = db.GqlQuery("SELECT * FROM Comment WHERE ANCESTOR IS :1 ", post)
 
