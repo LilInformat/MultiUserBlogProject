@@ -242,11 +242,11 @@ class EditHandler(Handler):
             blog = Blog.get_by_key_name(Const.KEYNAME)
             p_key = db.Key.from_path('Post', int(post_id), parent=blog.key())
             post = db.get(p_key)
-
-            if post.author == user.username:
-                params = {"subject" : post.subject, "content" : post.content, "log_text" : Const.LOGOUT}
-                self.render('edit.html', **params)
-                return
+            if post:
+                if post.author == user.username:
+                    params = {"subject" : post.subject, "content" : post.content, "log_text" : Const.LOGOUT}
+                    self.render('edit.html', **params)
+                    return
 
         self.redirect('/post/%s' % post_id)
 
