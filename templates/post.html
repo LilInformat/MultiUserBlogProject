@@ -52,7 +52,7 @@
     <div class="row">
       <div class="blog_comment col-md-12">
         <h5>Comment by {{comment.author}} at {{comment.created}}</h5>
-        <textarea name="textarea-{{comment.key().id()}}" {% if not comment.edit_enable and comment.edit_auth %} disabled  {% endif %} class="center-block">{{comment.content}}</textarea>
+        <textarea name="textarea-{{comment.key().id()}}" {% if not comment.edit_auth or not comment.edit_enable %} disabled  {% endif %} class="center-block">{{comment.content}}</textarea>
       </div>
     </div>
     <div class="row">

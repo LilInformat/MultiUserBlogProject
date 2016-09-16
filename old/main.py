@@ -108,6 +108,7 @@ class Handler(webapp2.RequestHandler, Encryption, InputVerification):
             for comment in comments:
                 comment.edit_enable = enable
                 comment.put()
+
     def set_editcomment(self, target):
         comments = db.GqlQuery("SELECT * FROM Comment WHERE edit_mode = True")
         for comment in comments:
