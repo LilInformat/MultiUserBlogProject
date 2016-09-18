@@ -198,12 +198,13 @@ class PostHandler(Handler):
                     self.redirect('/edit/%s' % str(post.key().id()))
                     return
             elif button_value[0] == "delete":
-                comments = db.GqlQuery("SELECT * FROM Comment WHERE ANCESTOR IS :1 ", post)
-                for comment in comments:
-                    comment.delete()
-                post.delete()
-                self.redirect('/')
-                return
+                if user.username == post.author:
+                    comments = db.GqlQuery("SELECT * FROM Comment WHERE ANCESTOR IS :1 ", post)
+                    for comment in comments:
+                        comment.delete()
+                    post.delete()
+                    self.redirect('/')
+                    return
             elif button_value[0] == "editcomment":
                 user = self.getUser_Logged()
                 c_key = db.Key.from_path('Comment', int(button_value[1]), parent=post.key())
