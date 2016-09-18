@@ -5,7 +5,6 @@ import jinja2
 from common import Const
 from datamodels import db, Blog, User, Comment, Post
 from basehandler import Handler
-
 """
 *
 * Main Content Handlers
@@ -233,7 +232,6 @@ class PostHandler(Handler):
             self.redirect('/post/%s/%s' % (str(post.key().id()), comment_id))
         else:
             self.redirect('/post/%s' % str(post.key().id()))
-
 
 class EditHandler(Handler):
     def get(self, post_id):
