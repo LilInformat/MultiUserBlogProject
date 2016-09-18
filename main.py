@@ -10,23 +10,26 @@ from basehandler import Handler
 * Main Content Handlers
 *
 """
-# Main Page Handler
+
+
 class MainHandler(Handler):
+    # Main Page Handler
     def get(self):
-        posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")
+        posts = db.GqlQuery("SELECT * FROM Post ORDER BY "
+                            "created DESC LIMIT 10")
         if self.getUser_Logged():
             self.render("home.html", log_text=Const.LOGOUT, posts=posts)
         else:
             self.render("home.html", log_text=Const.LOGIN, posts=posts)
 
-# Login Page Handler
+
 class LoginHandler(Handler):
+    # Login Page Handler
     def get(self):
-        #Handles user logout or login
         user = self.getUser_Logged()
         if user:
             self.resetCommentEditAuth()
-            self.response.headers.add_header('Set-Cookie','username=; Path=/')
+            self.response.headers.add_header('Set-Cookie', 'username=; Path=/')
             self.redirect("/")
         else:
             self.render("login.html", log_text=Const.LOGIN)
@@ -37,19 +40,26 @@ class LoginHandler(Handler):
 
         if self.valid_username(username) and self.valid_password(password):
             blog = Blog.get_or_insert(Const.KEYNAME, name="Udacity")
-            user_key = db.Key.from_path('User', str(username), parent=blog.key())
+            user_key = db.Key.from_path('User',
+                                        str(username),
+                                        parent=blog.key())
             user = db.get(user_key)
             if user and self.valid_pw(username, password, user.password):
                 username_hash = self.make_secure_val(username)
-                self.response.headers.add_header('Set-Cookie','username=%s; Path=/' % str(username_hash))
+                self.response.headers.add_header('Set-Cookie',
+                                                 'username=%s; Path=/' %
+                                                 str(username_hash))
                 self.redirect('/welcome')
                 return
 
-        params = {"error": "Invalid Username and/or Password", "username" : username, "log_text": Const.LOGIN}
+        params = {"error": "Invalid Username and/or Password",
+                  "username": username,
+                  "log_text": Const.LOGIN}
         self.render("login.html", **params)
 
-# Signup Page Handler
+
 class SignupHandler(Handler):
+    # Signup Page Handler
     def get(self):
         self.render("signup.html", log_text=Const.LOGIN)
 
@@ -59,7 +69,13 @@ class SignupHandler(Handler):
         verify = self.request.get('input_verify')
         email = self.request.get('input_email')
 
-        params = {"error_username" : "", "error_password": "", "error_verify": "", "error_email":"", "username" : username,"email": email, "log_text" : "LOGIN"}
+        params = {"error_username": "",
+                  "error_password": "",
+                  "error_verify": "",
+                  "error_email": "",
+                  "username": username,
+                  "email": email,
+                  "log_text": "LOGIN"}
 
         input_valid = True
         if not self.valid_username(username):
@@ -82,14 +98,19 @@ class SignupHandler(Handler):
         if input_valid:
             password_encrypt = self.make_pw_hash(name=username, pw=password)
             blog = Blog.get_or_insert(Const.KEYNAME, name="Udacity")
-            new_user = User(parent=blog, key_name=username, username=username, password=password_encrypt, email=email)
+            new_user = User(parent=blog,
+                            key_name=username,
+                            username=username,
+                            password=password_encrypt,
+                            email=email)
             new_user.put()
             self.redirect('/login')
         else:
             self.render('signup.html', **params)
 
-# New Post Handler
+
 class NewPostHandler(Handler):
+    # New Post Handler
     def get(self):
         if self.getUser_Logged():
             self.render("newpost.html", log_text=Const.LOGOUT)
@@ -97,17 +118,21 @@ class NewPostHandler(Handler):
             self.render("newpost.html", log_text=Const.LOGIN)
 
     def post(self):
-        params = {"error" : "", "subject" : "", "content": "", "log_text" : ""}
+        params = {"error": "",
+                  "subject": "",
+                  "content": "",
+                  "log_text": ""}
 
         user = self.getUser_Logged()
         if not user:
-            params["error"] = "You're not logged in! Please login before you post."
+            params["error"] = "You're not logged in!" \
+                              "Please login before you post."
             params["log_text"] = "LOGIN"
         else:
             subject = self.request.get("subject")
             content = self.request.get("content")
 
-            if not subject and  not content:
+            if not subject and not content:
                 params["error"] = "You're missing a subject and the content"
             elif not subject:
                 params["error"] = "You're missing a subject!"
@@ -115,16 +140,20 @@ class NewPostHandler(Handler):
                 params["error"] = "You're missing the content!"
 
             if not params["error"]:
-                blog = Blog.get_or_insert(Const.KEYNAME, name = "Udacity")
-                post = Post(parent=blog, subject=subject, author=user.username, content=content)
+                blog = Blog.get_or_insert(Const.KEYNAME, name="Udacity")
+                post = Post(parent=blog,
+                            subject=subject,
+                            author=user.username,
+                            content=content)
                 post.put()
                 self.redirect('/post/%s' % str(post.key().id()))
                 return
 
         self.render("newpost.html", **params)
 
-# Post Handler
+
 class PostHandler(Handler):
+    # Post Handler
     def get(self, post_id, comment_id=""):
         blog = Blog.get_or_insert(Const.KEYNAME, name="Udacity")
         p_key = db.Key.from_path('Post', int(post_id), parent=blog.key())
@@ -137,9 +166,16 @@ class PostHandler(Handler):
 
         self.initCommentEditAuth(post)
 
-        comments = db.GqlQuery("SELECT * FROM Comment WHERE ANCESTOR IS :1 ", post)
+        comments = db.GqlQuery("SELECT * FROM Comment WHERE ANCESTOR IS :1 ",
+                               post)
 
-        params = {"log_text" : "", "post" : post, "like_enable" : False, "dislike_enable" : False, "comment_enable" : False, "comments" : comments, "edit_enable" : False}
+        params = {"log_text": "",
+                  "post": post,
+                  "like_enable": False,
+                  "dislike_enable": False,
+                  "comment_enable": False,
+                  "comments": comments,
+                  "edit_enable": False}
 
         user = self.getUser_Logged()
         if user:
@@ -156,7 +192,7 @@ class PostHandler(Handler):
 
         self.render("post.html", **params)
 
-    def post(self, post_id, edit = ""):
+    def post(self, post_id, edit=""):
         blog = Blog.get_by_key_name(Const.KEYNAME)
         p_key = db.Key.from_path('Post', int(post_id), parent=blog.key())
         post = db.get(p_key)
@@ -175,7 +211,7 @@ class PostHandler(Handler):
                     if user.username in post.dislike_userlist:
                         post.dislikes -= 1
                         post.dislike_userlist.remove(user.username)
-                    if not user.username in post.like_userlist:
+                    if user.username not in post.like_userlist:
                         post.likes += 1
                         post.like_userlist.append(user.username)
                     post.put()
@@ -184,14 +220,17 @@ class PostHandler(Handler):
                     if user.username in post.like_userlist:
                         post.likes -= 1
                         post.like_userlist.remove(user.username)
-                    if not user.username in post.dislike_userlist:
+                    if user.username not in post.dislike_userlist:
                         post.dislikes += 1
                         post.dislike_userlist.append(user.username)
                     post.put()
             elif button_value[0] == "comment":
                 if self.getUser_Logged():
-                    new_content = self.request.get("comment_text","")
-                    new_comment = Comment(parent=post, author=user.username, content=new_content, edit_auth= True)
+                    new_content = self.request.get("comment_text", "")
+                    new_comment = Comment(parent=post,
+                                          author=user.username,
+                                          content=new_content,
+                                          edit_auth=True)
                     new_comment.put()
             elif button_value[0] == "edit":
                 if user.username == post.author:
@@ -199,7 +238,8 @@ class PostHandler(Handler):
                     return
             elif button_value[0] == "delete":
                 if user.username == post.author:
-                    comments = db.GqlQuery("SELECT * FROM Comment WHERE ANCESTOR IS :1 ", post)
+                    comments = db.GqlQuery("SELECT * FROM Comment WHERE "
+                                           "ANCESTOR IS :1 ", post)
                     for comment in comments:
                         comment.delete()
                     post.delete()
@@ -207,25 +247,32 @@ class PostHandler(Handler):
                     return
             elif button_value[0] == "editcomment":
                 user = self.getUser_Logged()
-                c_key = db.Key.from_path('Comment', int(button_value[1]), parent=post.key())
+                c_key = db.Key.from_path('Comment',
+                                         int(button_value[1]),
+                                         parent=post.key())
                 comment = db.get(c_key)
                 if comment and user.username == comment.author:
                     comment.edit_enable = True
                     comment_id = str(comment.key().id())
                     comment.put()
             elif button_value[0] == "deletecomment":
-                c_key = db.Key.from_path('Comment', int(button_value[1]), parent=post.key())
+                c_key = db.Key.from_path('Comment',
+                                         int(button_value[1]),
+                                         parent=post.key())
                 comment = db.get(c_key)
                 user = self.getUser_Logged()
                 if comment and user.username == comment.author:
                     comment.delete()
             elif button_value[0] == "submitcomment":
                 user = self.getUser_Logged()
-                c_key = db.Key.from_path('Comment', int(button_value[1]), parent=post.key())
+                c_key = db.Key.from_path('Comment',
+                                         int(button_value[1]),
+                                         parent=post.key())
                 comment = db.get(c_key)
                 if comment:
                     if user.username == comment.author:
-                        comment.content = self.request.get("textarea-" + button_value[1])
+                        comment.content = self.request.get("textarea-" +
+                                                           button_value[1])
                         comment.edit_enable = False
                         comment.put()
 
@@ -233,6 +280,7 @@ class PostHandler(Handler):
             self.redirect('/post/%s/%s' % (str(post.key().id()), comment_id))
         else:
             self.redirect('/post/%s' % str(post.key().id()))
+
 
 class EditHandler(Handler):
     def get(self, post_id):
@@ -243,7 +291,9 @@ class EditHandler(Handler):
             post = db.get(p_key)
             if post:
                 if post.author == user.username:
-                    params = {"subject" : post.subject, "content" : post.content, "log_text" : Const.LOGOUT}
+                    params = {"subject": post.subject,
+                              "content": post.content,
+                              "log_text": Const.LOGOUT}
                     self.render('edit.html', **params)
                     return
 
@@ -260,9 +310,12 @@ class EditHandler(Handler):
             subject = self.request.get("subject")
             content = self.request.get("content")
 
-            params = {"error" : "", "subject" : subject, "content": content, "log_text" : Const.LOGOUT}
+            params = {"error": "",
+                      "subject": subject,
+                      "content": content,
+                      "log_text": Const.LOGOUT}
 
-            if not subject and  not content:
+            if not subject and not content:
                 params["error"] = "You're missing a subject and the content"
             elif not subject:
                 params["error"] = "You're missing a subject!"
@@ -277,15 +330,18 @@ class EditHandler(Handler):
                 post.put()
         self.redirect('/post/%s' % str(post.key().id()))
 
+
 class WelcomeHandler(Handler):
     def get(self):
         user = self.getUser_Logged()
-        self.render("welcome.html", username=user.username, log_text=Const.LOGOUT)
+        self.render("welcome.html",
+                    username=user.username,
+                    log_text=Const.LOGOUT)
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/home', MainHandler),
-    ('/login',LoginHandler),
+    ('/login', LoginHandler),
     ('/signup', SignupHandler),
     ('/newpost', NewPostHandler),
     ('/post/([0-9]+)', PostHandler),
